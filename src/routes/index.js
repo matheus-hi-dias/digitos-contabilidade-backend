@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { router as naturezaRouter } from './natureza.js';
+import { router as documentNatureRouter } from './documentNature.js';
 
 const router = Router();
 
-router.use('/naturezas', naturezaRouter);
+router.use('/naturezas', documentNatureRouter);
 
 export { router };
