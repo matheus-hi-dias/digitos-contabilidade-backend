@@ -18,21 +18,6 @@ const selectByCod = async (documentCod) => {
 };
 
 const create = async (type) => {
-  if (!type.cod_tipo_doc) {
-    throw makeError({ message: 'cod_tipo_doc is required', status: 400 });
-  }
-
-  const findTypeByCod = await documentTypeRepository.findDocumentTypeByCod(
-    type.cod_tipo_doc
-  );
-
-  if (findTypeByCod.length > 0) {
-    throw makeError({
-      message: 'Document type code already exists',
-      status: 400,
-    });
-  }
-
   const findTypeByName = await documentTypeRepository.findDocumentTypeByName(
     type.tipo_doc
   );

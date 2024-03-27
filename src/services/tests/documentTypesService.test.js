@@ -53,58 +53,35 @@ describe('documentTypesService', () => {
   });
 
   describe('create', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+  
     it('should create a new document type', async () => {
       const newType = { cod_tipo_doc: 3, tipo_doc: 'Type C' };
-      jest
-        .spyOn(documentTypeRepository, 'findDocumentTypeByCod')
-        .mockResolvedValue([]);
       jest
         .spyOn(documentTypeRepository, 'findDocumentTypeByName')
         .mockResolvedValue([]);
       const createSpy = jest
         .spyOn(documentTypeRepository, 'create')
         .mockResolvedValue([newType]);
-
+  
       const createdType = await documentTypesService.create(newType);
-
+  
       expect(createdType).toEqual(newType);
       expect(createSpy).toHaveBeenCalledWith(newType);
     });
-
-    it('should throw error when cod_tipo_doc already exists', async () => {
-      jest
-        .spyOn(documentTypeRepository, 'findDocumentTypeByCod')
-        .mockResolvedValue([{ id: 1, tipo_doc: 'Type A' }]);
-
-      await expect(
-        documentTypesService.create({ cod_tipo_doc: 1, tipo_doc: 'Type A' })
-      ).rejects.toEqual({
-        message: 'Document type code already exists',
-        status: 400,
-      });
-    });
-
+  
     it('should throw error when tipo_doc already exists', async () => {
-      jest
-        .spyOn(documentTypeRepository, 'findDocumentTypeByCod')
-        .mockResolvedValue([]);
+      const existingType = { id: 1, tipo_doc: 'Type A' };
       jest
         .spyOn(documentTypeRepository, 'findDocumentTypeByName')
-        .mockResolvedValue([{ id: 1, tipo_doc: 'Type A' }]);
-
+        .mockResolvedValue([existingType]);
+  
       await expect(
         documentTypesService.create({ cod_tipo_doc: 3, tipo_doc: 'Type A' })
       ).rejects.toEqual({
         message: 'Document type already exists',
-        status: 400,
-      });
-    });
-
-    it('should throw error when cod_tipo_doc is missing', async () => {
-      await expect(
-        documentTypesService.create({ tipo_doc: 'Type C' })
-      ).rejects.toEqual({
-        message: 'cod_tipo_doc is required',
         status: 400,
       });
     });
