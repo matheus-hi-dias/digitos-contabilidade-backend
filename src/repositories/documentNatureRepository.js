@@ -12,17 +12,18 @@ const findNatureById = async (id) => {
 };
 
 const findNatureByName = async (name) => {
+  return await knexInstance('natureza_doc').select('*').where('natureza', name);
+};
+
+const createNature = async (nature) => {
+  return await knexInstance('natureza_doc').insert(nature).returning('*');
+};
+
+const udpateNature = async (id, nature) => {
   return await knexInstance('natureza_doc')
-    .select('*')
-    .where('natureza', name);
-};
-
-const createNature = async (natureza) => {
-  return await knexInstance('natureza_doc').insert(natureza).returning('*');
-};
-
-const udpateNature = async (id, natureza) => {
-  return await knexInstance('natureza_doc').update(natureza).where({ id }).returning('*');
+    .update(nature)
+    .where({ id })
+    .returning('*');
 };
 
 const deleteNature = async (id) => {
