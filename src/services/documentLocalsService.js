@@ -4,15 +4,14 @@ import documentNaturesService from './documentNaturesService.js';
 
 const selectAll = async () => {
   const documents = await documentLocalRepository.findAll();
-  const documentsFormatted = await documents.map(async (document) => {
-    console.log({ document });
+  const documentsFormatted = await Promise.all(documents.map(async (document) => {
     return {
       id: document.id,
       local_doc: document.local_doc,
-      natureza: await documentNaturesService.selectById(document.natureza_id),
+      natureza: (await documentNaturesService.selectById(document.natureza_id)).natureza,
     };
-  });
-
+  }));
+  console.log({documentsFormatted});
   return documentsFormatted;
 };
 
@@ -23,7 +22,13 @@ const selectById = async (id) => {
     throw makeError({ message: 'Local not found', status: 404 });
   }
 
-  return documentLocal[0];
+  const documentFormatted = documentLocal.map(async (document) => ({
+    id: document.id,
+    local_doc: document.local_doc,
+    natureza: (await documentNaturesService.selectById(document.natureza_id)).natureza
+  }))
+
+  return documentFormatted[0];
 };
 
 const create = async (local) => {
