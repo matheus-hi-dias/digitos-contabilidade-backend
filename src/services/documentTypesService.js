@@ -47,7 +47,7 @@ const update = async (cod_tipo_doc, updatedType) => {
   );
   if (
     findTypeByName.length > 0 &&
-    findTypeByName.cod_tipo_doc != cod_tipo_doc
+    findTypeByName[0].cod_tipo_doc != cod_tipo_doc
   ) {
     throw makeError({ message: 'Document type already exists', status: 400 });
   }
