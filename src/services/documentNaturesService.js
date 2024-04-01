@@ -17,7 +17,7 @@ const selectById = async (id) => {
 
 const create = async (nature) => {
   if (!nature.natureza) {
-    throw makeError({ message: 'Nature is required', status: 400 });
+    throw makeError({ message: 'Natureza is required', status: 400 });
   }
 
   const findNatureByName = await documentNatureRepository.findNatureByName(nature.natureza);
