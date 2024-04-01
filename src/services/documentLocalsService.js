@@ -53,48 +53,67 @@ const create = async (local) => {
   return insertedLocal[0];
 };
 
-// const update = async (cod_tipo_doc, updatedType) => {
-//   if (!updatedType.tipo_doc) {
-//     throw makeError({ message: 'tipo_doc is required', status: 400 });
-//   }
+const update = async (id, updatedLocal) => {
+  if (!updatedLocal.local_doc) {
+    throw makeError({ message: 'local_doc is required', status: 400 });
+  }
 
-//   const findTypeByCod = await documentTypeRepository.findDocumentTypeByCod(
-//     cod_tipo_doc
-//   );
+  if (!updatedLocal.natureza_id) {
+    throw makeError({ message: 'natureza_id is required', status: 400 });
+  }
 
-//   if (findTypeByCod.length === 0) {
-//     throw makeError({ message: 'Type not found', status: 404 });
-//   }
+  const findLocalById = await documentLocalRepository.findById(
+    id
+  );
 
-//   const findTypeByName = await documentTypeRepository.findDocumentTypeByName(
-//     updatedType.tipo_doc
-//   );
-//   if (
-//     findTypeByName.length > 0 &&
-//     findTypeByName.cod_tipo_doc != cod_tipo_doc
-//   ) {
-//     throw makeError({ message: 'Document type already exists', status: 400 });
-//   }
+  if (findLocalById.length === 0) {
+    throw makeError({ message: 'Local not found', status: 404 });
+  }
 
-//   const updatedTypeResponse = await documentTypeRepository.update(
-//     cod_tipo_doc,
-//     updatedType
-//   );
+  const findNatureById = await documentNaturesService.selectById(
+    updatedLocal.natureza_id
+  );
 
-//   return updatedTypeResponse[0];
-// };
+  if (findNatureById.length === 0) {
+    throw makeError({ message: 'Nature not found', status: 404 });
+  }
 
-// const remove = async (type_cod) => {
-//   const docType = await documentTypeRepository.deleteDocumentType(type_cod);
-//   if (!docType) {
-//     throw makeError({ message: 'Type not found', status: 404 });
-//   }
-// };
+  const findLocalByName = await documentLocalRepository.findByName(
+    updatedLocal.local_doc
+  );
+  
+  if (
+    findLocalByName.length > 0 &&
+    findLocalByName[0].id != id
+  ) {
+    throw makeError({ message: 'Document local already exists', status: 400 });
+  }
+
+  const updatedLocalResponse = await documentLocalRepository.update(
+    id,
+    updatedLocal
+  );
+
+  const documentFormatted = updatedLocalResponse.map(async (document) => ({
+    id: document.id,
+    local_doc: document.local_doc,
+    natureza: (await documentNaturesService.selectById(document.natureza_id)).natureza
+  }))
+
+  return documentFormatted[0];
+};
+
+const remove = async (id) => {
+  const docLocal = await documentLocalRepository.deleteDocumentLocal(id);
+  if (!docLocal) {
+    throw makeError({ message: 'Local not found', status: 404 });
+  }
+};
 
 export default {
   selectAll,
   selectById,
   create,
-  // update,
-  // remove,
+  update,
+  remove,
 };

@@ -30,8 +30,37 @@ const store = async (request, response, next) => {
   }
 };
 
+const update = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+
+    const updatedLocal = request.body;
+
+    const updateLocalResponse = await documentLocalsService.update(
+      id,
+      updatedLocal
+    );
+
+    response.status(200).json(updateLocalResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const remove = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    await documentLocalsService.remove(id);
+    response.status(200).json({ message: 'Local deleted' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   index,
   show,
   store,
+  update,
+  remove
 };
