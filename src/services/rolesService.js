@@ -1,10 +1,10 @@
-import { makeError } from "../middlewares/errorHandler.js";
+import { makeError } from '../middlewares/errorHandler.js';
 
-import roleRepository from "../repositories/roleRepository.js";
+import roleRepository from '../repositories/roleRepository.js';
 
 const selectAll = async () => {
   return await roleRepository.findAll();
-}
+};
 
 const selectById = async (id) => {
   const role = await roleRepository.findById(id);
@@ -13,7 +13,7 @@ const selectById = async (id) => {
   }
 
   return role[0];
-}
+};
 
 const create = async (role) => {
   if (!role.cargo) {
@@ -26,9 +26,9 @@ const create = async (role) => {
     throw makeError({ message: 'Role already exists', status: 400 });
   }
 
-  const newPermission = await roleRepository.create(permission);
+  const newPermission = await roleRepository.create(role);
   return newPermission[0];
-}
+};
 
 const update = async (id, updatedRole) => {
   if (!updatedRole.cargo) {
@@ -44,15 +44,19 @@ const update = async (id, updatedRole) => {
   const updatedRoleResponse = await roleRepository.update(id, updatedRole);
 
   return updatedRoleResponse[0];
-}
+};
 
 const remove = async (id) => {
   const role = await roleRepository.deleteRole(id);
   if (!role) {
     throw makeError({ message: 'Role not found', status: 404 });
   }
-}
+};
 
 export default {
-  selectAll, selectById, create, update, remove
-}
+  selectAll,
+  selectById,
+  create,
+  update,
+  remove,
+};
