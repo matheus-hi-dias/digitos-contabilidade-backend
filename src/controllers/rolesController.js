@@ -1,14 +1,13 @@
-import { request } from "express";
-import rolesService from "../services/rolesService.js";
+import rolesService from '../services/rolesService.js';
 
 const index = async (request, response, next) => {
   try {
     const roles = await rolesService.selectAll();
     response.status(200).json(roles);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 const show = async (request, response, next) => {
   try {
@@ -18,7 +17,7 @@ const show = async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 const store = async (request, response, next) => {
   try {
@@ -29,11 +28,11 @@ const store = async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 const update = async (request, response, next) => {
   try {
-    const {id }= request.params;
+    const { id } = request.params;
     const updatedRole = request.body;
 
     const updatedRoleResponse = await rolesService.update(id, updatedRole);
@@ -41,22 +40,22 @@ const update = async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 const remove = async (request, response, next) => {
   try {
     const { id } = request.params;
     await rolesService.remove(id);
-    response.status(200).json({message: 'Role deleted'});
+    response.status(200).json({ message: 'Role deleted' });
   } catch (error) {
     next(error);
   }
-}
+};
 
 export default {
   index,
   show,
   store,
-  update, 
-  remove
-}
+  update,
+  remove,
+};
