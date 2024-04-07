@@ -26,7 +26,7 @@ const showByRole = async (request, response, next) => {
 const showByPermission = async (request, response, next) => {
   try {
     const { id_permissao } = request.params;
-    const permissionRoles = await rolePermissionsService.selectByRoleId(
+    const permissionRoles = await rolePermissionsService.selectByPermissionId(
       id_permissao
     );
     return response.status(200).json(permissionRoles);
