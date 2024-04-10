@@ -1,4 +1,3 @@
-import { request } from "express";
 import permissionsService from "../services/permissionsService.js";
 
 const index = async (request, response, next) => {
@@ -57,6 +56,6 @@ export default {
   index,
   show,
   store,
-  update, 
+  update,
   remove
 }

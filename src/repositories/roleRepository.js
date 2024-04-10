@@ -1,7 +1,7 @@
 import knex from 'knex';
-import knexconfig from '../../knexfile.js';
+import knexConfig from '../../knexfile.js';
 
-const knexInstance = knex(knexconfig);
+const knexInstance = knex(knexConfig);
 
 const findAll = async () => {
   return await knexInstance('cargo').select('*');
