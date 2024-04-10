@@ -7,9 +7,9 @@ const update = async (req, res) => {}
 const remove = async (req, res) => {}
 
 export default {
-  index, 
-  show, 
-  store, 
-  update, 
+  index,
+  show,
+  store,
+  update,
   remove
 }
