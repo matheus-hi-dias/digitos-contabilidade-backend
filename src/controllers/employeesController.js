@@ -28,18 +28,6 @@ const store = async (req, res, next) => {
   }
 }
 
-const login = async (req, res, next) => {
-  try {
-    const user = req.body;
-    const token = await employeesService.login(user);
-    console.log(token);
-
-    res.status(200).json({ token });
-  } catch (error) {
-    next(error)
-  }
-}
-
 const update = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -66,7 +54,6 @@ export default {
   index,
   show,
   store,
-  login,
   update,
   remove
 }

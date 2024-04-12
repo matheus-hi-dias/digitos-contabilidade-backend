@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 import employeeRepository from "../repositories/employeeRepository.js";
 import { makeError } from "../middlewares/errorHandler.js";
@@ -55,28 +54,6 @@ const create = async (employee) => {
   return newEmployee[0];
 }
 
-const login = async ({login, password}) => {
-  let employeeFromDB = await employeeRepository.findByUsername(login);
-  console.log({login, password})
-
-  if (employeeFromDB.length === 0) {
-    const employeeByEmail = await employeeRepository.findByEmail(login);
-    if (employeeByEmail.length === 0) {
-      throw makeError({ message: 'Employee not found', status: 404 });
-    }
-    employeeFromDB = employeeByEmail;
-  }
-  console.log({employeeFromDB})
-  const isValidPassword = await bcrypt.compare(password, employeeFromDB[0].senha);
-  console.log({isValidPassword});
-
-  if (!isValidPassword) {
-    throw makeError({ message: 'Login error', status: 400 });
-  }
-
-  return jwt.sign({ id: employeeFromDB[0].id }, process.env.JWT_SECRET, { expiresIn: '7 days' });
-}
-
 const update = async (id, updatedEmployee) => {
   if (!updatedEmployee.usuario) {
     throw makeError({ message: 'usuario is required', status: 400 });
@@ -121,7 +98,6 @@ export default {
   selectAll,
   selectById,
   create,
-  login,
   update,
   remove
 }
