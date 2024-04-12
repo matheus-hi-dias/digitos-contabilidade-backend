@@ -1,12 +1,14 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 import employeeRepository from "../repositories/employeeRepository.js";
 import { makeError } from "../middlewares/errorHandler.js";
 
-const index = async () => {
+const selectAll = async () => {
   return await employeeRepository.findAll();
 }
-const show = async (id) => {
+
+const selectById = async (id) => {
   const employee = await employeeRepository.findById(id);
   if (employee.length === 0) {
     throw makeError({ message: 'Employee not found', status: 404 });
@@ -14,50 +16,35 @@ const show = async (id) => {
 
   return employee[0];
 }
-const login = async (login, password) => {
-  const employeeFromDB = await employeeRepository.findByUsername(login);
 
-  if (employeeFromDB.length === 0) {
-    const employeeByEmail = await employeeRepository.findByEmail(login);
-    if (employeeByEmail.length === 0) {
-      throw makeError({ message: 'Employee not found', status: 404 });
-    }
-    employeeFromDB = employeeByEmail;
-  }
-
-  const isValidPassword = await bcrypt.compare(password, employeeFromDB[0].senha);
-
-  if (!isValidPassword) {
-    throw makeError({ message: 'Invalid password', status: 400 });
-  }
-
-  return 'logado';
-}
-const store = async (employee) => {
+const create = async (employee) => {
   if (!employee.usuario) {
-    throw makeError({ message: 'Username is required', status: 400 });
+    throw makeError({ message: 'usuario is required', status: 400 });
   }
   if (!employee.senha) {
-    throw makeError({ message: 'Password is required', status: 400 });
+    throw makeError({ message: 'senha is required', status: 400 });
   }
   if (!employee.email) {
-    throw makeError({ message: 'Email is required', status: 400 });
+    throw makeError({ message: 'email is required', status: 400 });
   }
   if (!employee.nome) {
-    throw makeError({ message: 'Name is required', status: 400 });
+    throw makeError({ message: 'name is required', status: 400 });
   }
   if (!employee.cargo_id) {
-    throw makeError({ message: 'Cargo is required', status: 400 });
+    throw makeError({ message: 'cargo_id is required', status: 400 });
   }
 
-
   const findEmployeeByUsername = await employeeRepository.findByUsername(employee.usuario);
-
   if (findEmployeeByUsername.length > 0) {
     throw makeError({ message: 'Username already exists', status: 400 });
   }
 
-  const hashedPassword = await bcrypt.hash(employee.senha, process.env.SALT_ROUNDS);
+  const findEmployeeByEmail = await employeeRepository.findByEmail(employee.email);
+  if (findEmployeeByEmail.length > 0) {
+    throw makeError({ message: 'Email already exists', status: 400 });
+  }
+
+  const hashedPassword = await bcrypt.hash(employee.senha, Number(process.env.SALT_ROUNDS));
 
   const user = {
     ...employee,
@@ -67,12 +54,74 @@ const store = async (employee) => {
   const newEmployee = await employeeRepository.create(user);
   return newEmployee[0];
 }
-const update = async (id, updatedEmployee) => {}
-const remove = async (id) => {}
+
+const login = async ({login, password}) => {
+  let employeeFromDB = await employeeRepository.findByUsername(login);
+  console.log({login, password})
+
+  if (employeeFromDB.length === 0) {
+    const employeeByEmail = await employeeRepository.findByEmail(login);
+    if (employeeByEmail.length === 0) {
+      throw makeError({ message: 'Employee not found', status: 404 });
+    }
+    employeeFromDB = employeeByEmail;
+  }
+  console.log({employeeFromDB})
+  const isValidPassword = await bcrypt.compare(password, employeeFromDB[0].senha);
+  console.log({isValidPassword});
+
+  if (!isValidPassword) {
+    throw makeError({ message: 'Login error', status: 400 });
+  }
+
+  return jwt.sign({ id: employeeFromDB[0].id }, process.env.JWT_SECRET, { expiresIn: '7 days' });
+}
+
+const update = async (id, updatedEmployee) => {
+  if (!updatedEmployee.usuario) {
+    throw makeError({ message: 'usuario is required', status: 400 });
+  }
+  if (!updatedEmployee.email) {
+    throw makeError({ message: 'email is required', status: 400 });
+  }
+  if (!updatedEmployee.nome) {
+    throw makeError({ message: 'name is required', status: 400 });
+  }
+  if (!updatedEmployee.cargo_id) {
+    throw makeError({ message: 'cargo_id is required', status: 400 });
+  }
+
+  const findEmployeeByUsername = await employeeRepository.findByUsername(updatedEmployee.usuario);
+  if (findEmployeeByUsername.length > 0 && findEmployeeByUsername[0].id != id) {
+    throw makeError({ message: 'Username already exists', status: 400 });
+  }
+
+  const findEmployeeByEmail = await employeeRepository.findByEmail(updatedEmployee.email);
+  if (findEmployeeByEmail.length > 0 && findEmployeeByEmail[0].id != id) {
+    throw makeError({ message: 'Email already exists', status: 400 });
+  }
+
+  if (updatedEmployee.senha) {
+    updatedEmployee.senha = await bcrypt.hash(updatedEmployee.senha, Number(process.env.SALT_ROUNDS));
+  }
+
+  const updatedEmployeeResponse = await employeeRepository.update(id, updatedEmployee);
+
+  return updatedEmployeeResponse[0];
+}
+
+const remove = async (id) => {
+  const employee = await employeeRepository.deleteEmployee(id);
+  if (!employee) {
+    throw makeError({ message: 'Employee not found', status: 404 });
+  }
+}
+
 export default {
-  index,
-  show,
-  store,
+  selectAll,
+  selectById,
+  create,
+  login,
   update,
   remove
 }
