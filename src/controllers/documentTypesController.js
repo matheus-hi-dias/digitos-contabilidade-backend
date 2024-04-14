@@ -11,8 +11,8 @@ const index = async (request, response, next) => {
 
 const show = async (request, response, next) => {
   try {
-    const { cod_tipo_doc } = request.params;
-    const type = await documentTypesService.selectByCod(cod_tipo_doc);
+    const { id } = request.params;
+    const type = await documentTypesService.selectById(id);
     return response.status(200).json(type);
   } catch (error) {
     next(error);
@@ -32,12 +32,12 @@ const store = async (request, response, next) => {
 
 const update = async (request, response, next) => {
   try {
-    const { cod_tipo_doc } = request.params;
+    const { id } = request.params;
 
     const updatedType = request.body;
 
     const updateTypeResponse = await documentTypesService.update(
-      cod_tipo_doc,
+      id,
       updatedType
     );
 
@@ -49,8 +49,8 @@ const update = async (request, response, next) => {
 
 const remove = async (request, response, next) => {
   try {
-    const { cod_tipo_doc } = request.params;
-    await documentTypesService.remove(cod_tipo_doc);
+    const { id } = request.params;
+    await documentTypesService.remove(id);
     response.status(200).json({ message: 'Nature deleted' });
   } catch (error) {
     next(error);

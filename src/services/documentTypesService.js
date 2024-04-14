@@ -5,9 +5,9 @@ const selectAll = async () => {
   return await documentTypeRepository.findAll();
 };
 
-const selectByCod = async (documentCod) => {
-  const documentType = await documentTypeRepository.findDocumentTypeByCod(
-    documentCod
+const selectById = async (id) => {
+  const documentType = await documentTypeRepository.findDocumentTypeById(
+    id
   );
 
   if (documentType.length === 0) {
@@ -19,7 +19,7 @@ const selectByCod = async (documentCod) => {
 
 const create = async (type) => {
   const findTypeByName = await documentTypeRepository.findDocumentTypeByName(
-    type.tipo_doc
+    type.doc_type
   );
   if (findTypeByName.length > 0) {
     throw makeError({ message: 'Document type already exists', status: 400 });
@@ -29,13 +29,13 @@ const create = async (type) => {
   return newType[0];
 };
 
-const update = async (cod_tipo_doc, updatedType) => {
-  if (!updatedType.tipo_doc) {
-    throw makeError({ message: 'tipo_doc is required', status: 400 });
+const update = async (id, updatedType) => {
+  if (!updatedType.doc_type) {
+    throw makeError({ message: 'doc_type is required', status: 400 });
   }
 
-  const findTypeByCod = await documentTypeRepository.findDocumentTypeByCod(
-    cod_tipo_doc
+  const findTypeByCod = await documentTypeRepository.findDocumentTypeById(
+    id
   );
 
   if (findTypeByCod.length === 0) {
@@ -43,17 +43,17 @@ const update = async (cod_tipo_doc, updatedType) => {
   }
 
   const findTypeByName = await documentTypeRepository.findDocumentTypeByName(
-    updatedType.tipo_doc
+    updatedType.doc_type
   );
   if (
     findTypeByName.length > 0 &&
-    findTypeByName[0].cod_tipo_doc != cod_tipo_doc
+    findTypeByName[0].id != id
   ) {
     throw makeError({ message: 'Document type already exists', status: 400 });
   }
 
   const updatedTypeResponse = await documentTypeRepository.update(
-    cod_tipo_doc,
+    id,
     updatedType
   );
 
@@ -69,7 +69,7 @@ const remove = async (type_cod) => {
 
 export default {
   selectAll,
-  selectByCod,
+  selectById,
   create,
   update,
   remove,

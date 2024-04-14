@@ -4,39 +4,39 @@ import knexConfig from '../../knexfile.js';
 const knexInstance = knex(knexConfig);
 
 const findAll = async () => {
-  return await knexInstance('tipo_doc').select('*');
+  return await knexInstance('doc_type').select('*');
 };
 
-const findDocumentTypeByCod = async (documentCod) => {
-  return await knexInstance('tipo_doc')
+const findDocumentTypeById = async (id) => {
+  return await knexInstance('doc_type')
     .select('*')
-    .where('cod_tipo_doc', documentCod);
+    .where({id});
 };
 
-const findDocumentTypeByName = async (tipo_doc) => {
-  return await knexInstance('tipo_doc').select('*').where('tipo_doc', tipo_doc);
+const findDocumentTypeByName = async (doc_type) => {
+  return await knexInstance('doc_type').select('*').where('doc_type', doc_type);
 };
 
 const create = async (type) => {
-  return await knexInstance('tipo_doc').insert(type).returning('*');
+  return await knexInstance('doc_type').insert(type).returning('*');
 };
 
-const update = async (cod_tipo_doc, type) => {
-  return await knexInstance('tipo_doc')
+const update = async (id, type) => {
+  return await knexInstance('doc_type')
     .update(type)
-    .where('cod_tipo_doc', cod_tipo_doc)
+    .where('id', id)
     .returning('*');
 };
 
-const deleteDocumentType = async (cod_tipo_doc) => {
-  return await knexInstance('tipo_doc')
+const deleteDocumentType = async (id) => {
+  return await knexInstance('doc_type')
     .delete()
-    .where('cod_tipo_doc', cod_tipo_doc);
+    .where({id});
 };
 
 export default {
   findAll,
-  findDocumentTypeByCod,
+  findDocumentTypeById,
   findDocumentTypeByName,
   create,
   update,
