@@ -7,6 +7,7 @@ import { router as permissionRouter } from './permission.js';
 import { router as roleRouter } from './role.js';
 import { router as rolePermissionRouter } from './rolePermission.js';
 import { router as employeeRouter } from './employee.js';
+import { router as employeePermissionRouter } from './employeePermission.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/permissoes', permissionRouter);
 router.use('/cargos', roleRouter);
 router.use('/permissoes-cargos', rolePermissionRouter);
 router.use('/funcionarios', employeeRouter);
+router.use('/permissoes-funcionario', employeePermissionRouter);
 
 export { router };
