@@ -3,9 +3,9 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.createTable('natureza_doc', (table) => {
+  await knex.schema.createTable('permission', (table) => {
     table.increments('id').primary();
-    table.string('natureza', 50).notNullable();
+    table.string('permission', 100);
   });
 };
 
@@ -14,5 +14,5 @@ export async function up(knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.dropTable('natureza_doc');
+  await knex.schema.dropTable('permission');
 };

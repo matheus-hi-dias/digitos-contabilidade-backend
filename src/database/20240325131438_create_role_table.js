@@ -3,11 +3,9 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.createTable('cliente', (table) => {
+  await knex.schema.createTable('role', (table) => {
     table.increments('id').primary();
-    table.string('nome', 50).notNullable();
-    table.string('tipo', 1).notNullable();
-    table.string('cpfCnpj', 14).notNullable();
+    table.string('role', 50).notNullable();
   });
 };
 
@@ -16,5 +14,5 @@ export async function up(knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.dropTable('cliente');
+  await knex.schema.dropTable('role');
 };
