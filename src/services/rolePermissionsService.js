@@ -25,14 +25,10 @@ const selectByRoleId = async (id_cargo) => {
     throw makeError({ message: 'Role permissions not found', status: 404 });
   }
 
-  const roleById = await roleService.selectById(id_cargo);
-  const rolePermissionsFormatted = {
-    cargo: roleById.cargo,
-    permissoes: await Promise.all(rolePermissions.map(async (rolePermission) => {
-      const permissionById = await permissionService.selectById(rolePermission.id_permissao);
-      return permissionById.permissao;
-    }))
-  };
+  const rolePermissionsFormatted = await Promise.all(rolePermissions.map(async (rolePermission) => {
+    return await permissionService.selectById(rolePermission.id_permissao);
+
+  }))
 
   return rolePermissionsFormatted;
 };
@@ -44,14 +40,9 @@ const selectByPermissionId = async (id_permissao) => {
     throw makeError({ message: 'Permission roles not found', status: 404 });
   }
 
-  const permissionById = await permissionService.selectById(id_permissao);
-  const permissionRolesFormatted = {
-    permissao: permissionById.permissao,
-    cargos: await Promise.all(permissionRoles.map(async (permissionRole) => {
-      const roleById = await roleService.selectById(permissionRole.id_cargo);
-      return roleById.cargo;
-    }))
-  };
+  const permissionRolesFormatted = await Promise.all(permissionRoles.map(async (permissionRole) => {
+    return await roleService.selectById(permissionRole.id_cargo);
+  }));
 
   return permissionRolesFormatted;
 };
