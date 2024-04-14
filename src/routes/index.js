@@ -12,8 +12,8 @@ import { router as employeePermissionRouter } from './employeePermission.js';
 const router = Router();
 
 router.use('/auth', authRouter);
-router.use('/naturezas', documentNatureRouter);
-router.use('/tipo-de-documento', documentTypeRouter);
+router.use('/nature', documentNatureRouter);
+router.use('/document-type', documentTypeRouter);
 router.use('/local-do-documento', documentLocalRouter);
 router.use('/permissoes', permissionRouter);
 router.use('/cargos', roleRouter);

@@ -18,6 +18,9 @@ const selectById = async (id) => {
 };
 
 const create = async (type) => {
+  if (!type.doc_type) {
+    throw makeError({ message: 'doc_type is required', status: 400 });
+  }
   const findTypeByName = await documentTypeRepository.findDocumentTypeByName(
     type.doc_type
   );

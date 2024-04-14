@@ -16,11 +16,11 @@ const selectById = async (id) => {
 };
 
 const create = async (nature) => {
-  if (!nature.natureza) {
-    throw makeError({ message: 'Natureza is required', status: 400 });
+  if (!nature.nature) {
+    throw makeError({ message: 'Nature is required', status: 400 });
   }
 
-  const findNatureByName = await documentNatureRepository.findNatureByName(nature.natureza);
+  const findNatureByName = await documentNatureRepository.findNatureByName(nature.nature);
   if (findNatureByName.length > 0) {
     throw makeError({ message: 'Nature already exists', status: 400 });
   }
@@ -31,12 +31,13 @@ const create = async (nature) => {
 
 const update = async (id, updatedNature) => {
 
-  if (!updatedNature.natureza) {
+  if (!updatedNature.nature) {
     throw makeError({ message: 'Nature is required', status: 400 });
   }
 
-  const findNatureByName = await documentNatureRepository.findNatureByName(updatedNature.natureza);
-  if (findNatureByName.length > 0 && findNatureByName[0].id !== id) {
+  const findNatureByName = await documentNatureRepository.findNatureByName(updatedNature.nature);
+  console.log(findNatureByName)
+  if (findNatureByName.length > 0 && findNatureByName[0].id != id) {
     throw makeError({ message: 'Nature already exists', status: 400 });
   }
 
@@ -48,7 +49,7 @@ const update = async (id, updatedNature) => {
 const remove = async (id) => {
   const nature = await documentNatureRepository.deleteNature(id);
   if (!nature) {
-    throw makeError({ message: "This nature doesn't exist", status: 400 });
+    throw makeError({ message: "Nature not found", status: 404 });
   }
 };
 
