@@ -4,28 +4,28 @@ import knexConfig from '../../knexfile.js';
 const knexInstance = knex(knexConfig);
 
 const findAll = async () => {
-  return await knexInstance('cargo').select('*');
+  return await knexInstance('role').select('*');
 }
 
 const findById = async (id) => {
-  return await knexInstance('cargo').select('*').where({id});
+  return await knexInstance('role').select('*').where({id});
 }
 
 const findByName = async (role) => {
-  return await knexInstance('cargo').select('*').where('cargo', role);
+  return await knexInstance('role').select('*').where({role});
 
 }
 
 const create = async (role) => {
-  return await knexInstance('cargo').insert(role).returning('*');
+  return await knexInstance('role').insert(role).returning('*');
 }
 
 const update = async (id, updatedRole) => {
-  return await knexInstance('cargo').update(updatedRole).where({id}).returning('*');
+  return await knexInstance('role').update(updatedRole).where({id}).returning('*');
 }
 
 const deleteRole = async (id) => {
-  return await knexInstance('cargo').delete().where({id});
+  return await knexInstance('role').delete().where({id});
 }
 
 export default {

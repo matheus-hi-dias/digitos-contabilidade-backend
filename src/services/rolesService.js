@@ -16,11 +16,11 @@ const selectById = async (id) => {
 };
 
 const create = async (role) => {
-  if (!role.cargo) {
-    throw makeError({ message: 'Cargo is required', status: 400 });
+  if (!role.role) {
+    throw makeError({ message: 'role is required', status: 400 });
   }
 
-  const findRoleByName = await roleRepository.findByName(role.cargo);
+  const findRoleByName = await roleRepository.findByName(role.role);
 
   if (findRoleByName.length > 0) {
     throw makeError({ message: 'Role already exists', status: 400 });
@@ -31,11 +31,11 @@ const create = async (role) => {
 };
 
 const update = async (id, updatedRole) => {
-  if (!updatedRole.cargo) {
-    throw makeError({ message: 'Cargo is required', status: 400 });
+  if (!updatedRole.role) {
+    throw makeError({ message: 'role is required', status: 400 });
   }
 
-  const findRoleByName = await roleRepository.findByName(updatedRole.cargo);
+  const findRoleByName = await roleRepository.findByName(updatedRole.role);
 
   if (findRoleByName.length > 0 && findRoleByName[0].id != id) {
     throw makeError({ message: 'Role already exists', status: 400 });
