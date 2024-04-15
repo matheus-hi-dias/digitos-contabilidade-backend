@@ -4,25 +4,25 @@ import knexConfig from '../../knexfile.js';
 const knexInstance = knex(knexConfig);
 
 const findAll = async () => {
-  return await knexInstance('funcionario').select('id', 'usuario');
+  return await knexInstance('employee').select('id', 'username');
 }
 const findById = async (id) => {
-  return await knexInstance('funcionario').select('id', 'email', 'usuario', 'nome', 'cargo_id').where({id})
+  return await knexInstance('employee').select('id', 'email', 'username', 'name', 'role_id').where({id})
 }
 const findByUsername = async (username) => {
-  return await knexInstance('funcionario').select('*').where('usuario', username)
+  return await knexInstance('employee').select('*').where({ username })
 }
 const findByEmail = async (email) => {
-  return await knexInstance('funcionario').select('*').where('email', email)
+  return await knexInstance('employee').select('*').where({email})
 }
 const create = async (employee) => {
-  return await knexInstance('funcionario').insert(employee).returning('id')
+  return await knexInstance('employee').insert(employee).returning('id')
 }
 const update = async (id, updatedEmployee) => {
-  return await knexInstance('funcionario').update(updatedEmployee).where({id}).returning('id')
+  return await knexInstance('employee').update(updatedEmployee).where({id}).returning('id')
 }
 const deleteEmployee = async (id) => {
-  return await knexInstance('funcionario').delete().where({id})
+  return await knexInstance('employee').delete().where({id})
 }
 
 export default {

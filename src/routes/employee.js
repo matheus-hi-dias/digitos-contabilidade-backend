@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/', employeesController.index);
 router.get('/:id', employeesController.show);
-router.post('/novo-funcionario', employeesController.store);
+router.post('/new-employee', employeesController.store);
 router.put('/:id', employeesController.update);
 router.delete('/:id', employeesController.remove);
 

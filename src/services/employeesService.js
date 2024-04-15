@@ -17,37 +17,37 @@ const selectById = async (id) => {
 }
 
 const create = async (employee) => {
-  if (!employee.usuario) {
-    throw makeError({ message: 'usuario is required', status: 400 });
+  if (!employee.username) {
+    throw makeError({ message: 'username is required', status: 400 });
   }
-  if (!employee.senha) {
-    throw makeError({ message: 'senha is required', status: 400 });
+  if (!employee.password) {
+    throw makeError({ message: 'password is required', status: 400 });
   }
   if (!employee.email) {
     throw makeError({ message: 'email is required', status: 400 });
   }
-  if (!employee.nome) {
+  if (!employee.name) {
     throw makeError({ message: 'name is required', status: 400 });
   }
-  if (!employee.cargo_id) {
-    throw makeError({ message: 'cargo_id is required', status: 400 });
+  if (!employee.role_id) {
+    throw makeError({ message: 'role_id is required', status: 400 });
   }
 
-  const findEmployeeByUsername = await employeeRepository.findByUsername(employee.usuario);
+  const findEmployeeByUsername = await employeeRepository.findByUsername(employee.username);
   if (findEmployeeByUsername.length > 0) {
-    throw makeError({ message: 'Username already exists', status: 400 });
+    throw makeError({ message: 'Username already in use', status: 400 });
   }
 
   const findEmployeeByEmail = await employeeRepository.findByEmail(employee.email);
   if (findEmployeeByEmail.length > 0) {
-    throw makeError({ message: 'Email already exists', status: 400 });
+    throw makeError({ message: 'Email already in use', status: 400 });
   }
 
-  const hashedPassword = await bcrypt.hash(employee.senha, Number(process.env.SALT_ROUNDS));
+  const hashedPassword = await bcrypt.hash(employee.password, Number(process.env.SALT_ROUNDS));
 
   const user = {
     ...employee,
-    senha: hashedPassword
+    password: hashedPassword
   }
 
   const newEmployee = await employeeRepository.create(user);
@@ -55,34 +55,34 @@ const create = async (employee) => {
 }
 
 const update = async (id, updatedEmployee) => {
-  if (!updatedEmployee.usuario) {
-    throw makeError({ message: 'usuario is required', status: 400 });
+  if (!updatedEmployee.username) {
+    throw makeError({ message: 'username is required', status: 400 });
   }
   if (!updatedEmployee.email) {
     throw makeError({ message: 'email is required', status: 400 });
   }
-  if (!updatedEmployee.nome) {
+  if (!updatedEmployee.name) {
     throw makeError({ message: 'name is required', status: 400 });
   }
-  if (!updatedEmployee.cargo_id) {
-    throw makeError({ message: 'cargo_id is required', status: 400 });
+  if (!updatedEmployee.role_id) {
+    throw makeError({ message: 'role_id is required', status: 400 });
   }
 
-  const findEmployeeByUsername = await employeeRepository.findByUsername(updatedEmployee.usuario);
+  const findEmployeeByUsername = await employeeRepository.findByUsername(updatedEmployee.username);
   if (findEmployeeByUsername.length > 0 && findEmployeeByUsername[0].id != id) {
-    throw makeError({ message: 'Username already exists', status: 400 });
+    throw makeError({ message: 'Username already in use', status: 400 });
   }
 
   const findEmployeeByEmail = await employeeRepository.findByEmail(updatedEmployee.email);
   if (findEmployeeByEmail.length > 0 && findEmployeeByEmail[0].id != id) {
-    throw makeError({ message: 'Email already exists', status: 400 });
+    throw makeError({ message: 'Email already in use', status: 400 });
+  }
+  const employeeToUpdate = {...updatedEmployee};
+  if (employeeToUpdate.password) {
+    employeeToUpdate.password = await bcrypt.hash(employeeToUpdate.password, Number(process.env.SALT_ROUNDS));
   }
 
-  if (updatedEmployee.senha) {
-    updatedEmployee.senha = await bcrypt.hash(updatedEmployee.senha, Number(process.env.SALT_ROUNDS));
-  }
-
-  const updatedEmployeeResponse = await employeeRepository.update(id, updatedEmployee);
+  const updatedEmployeeResponse = await employeeRepository.update(id, employeeToUpdate);
 
   return updatedEmployeeResponse[0];
 }
