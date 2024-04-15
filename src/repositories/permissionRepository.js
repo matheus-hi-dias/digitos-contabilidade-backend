@@ -4,28 +4,28 @@ import knexConfig from '../../knexfile.js';
 const knexInstance = knex(knexConfig);
 
 const findAll = async () => {
-  return await knexInstance('permissao').select('*');
+  return await knexInstance('permission').select('*');
 }
 
 const findById = async (id) => {
-  return await knexInstance('permissao').select('*').where({id});
+  return await knexInstance('permission').select('*').where({id});
 }
 
-const findByName = async (name) => {
-  return await knexInstance('permissao').select('*').where('permissao', name);
+const findByName = async (permission) => {
+  return await knexInstance('permission').select('*').where({permission});
 
 }
 
 const create = async (permission) => {
-  return await knexInstance('permissao').insert(permission).returning('*');
+  return await knexInstance('permission').insert(permission).returning('*');
 }
 
 const update = async (id, updatedPermission) => {
-  return await knexInstance('permissao').update(updatedPermission).where({id}).returning('*');
+  return await knexInstance('permission').update(updatedPermission).where({id}).returning('*');
 }
 
 const deletePermission = async (id) => {
-  return await knexInstance('permissao').delete().where({id});
+  return await knexInstance('permission').delete().where({id});
 }
 
 export default {

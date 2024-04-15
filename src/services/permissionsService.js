@@ -16,11 +16,11 @@ const selectById = async (id) => {
 }
 
 const create = async (permission) => {
-  if (!permission.permissao) {
-    throw makeError({ message: 'Permissão is required', status: 400 });
+  if (!permission.permission) {
+    throw makeError({ message: 'permission is required', status: 400 });
   }
 
-  const findPermissionByName = await permissionRepository.findByName(permission.permissao);
+  const findPermissionByName = await permissionRepository.findByName(permission.permission);
 
   if (findPermissionByName.length > 0) {
     throw makeError({ message: 'Permission already exists', status: 400 });
@@ -31,11 +31,11 @@ const create = async (permission) => {
 }
 
 const update = async (id, updatedPermission) => {
-  if (!updatedPermission.permissao) {
-    throw makeError({ message: 'Permissao is required', status: 400 });
+  if (!updatedPermission.permission) {
+    throw makeError({ message: 'permission is required', status: 400 });
   }
 
-  const findPermissionByName = await permissionRepository.findByName(updatedPermission.permissao);
+  const findPermissionByName = await permissionRepository.findByName(updatedPermission.permission);
 
   if (findPermissionByName.length > 0 && findPermissionByName[0].id != id) {
     throw makeError({ message: 'Permission already exists', status: 400 });
