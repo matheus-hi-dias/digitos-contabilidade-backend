@@ -3,4 +3,15 @@ import knexConfig from "../../knexfile.js"
 
 const knexInstance = knex(knexConfig);
 
-export default {}
+const create = async (client) => {
+  return await knexInstance("client").insert(client).returning("*");
+}
+
+const verifyCpfCnpj = async (cpfCnpj) => {
+  return await knexInstance("client").select("*").where({ cpfCnpj });
+}
+
+export default {
+  create,
+  verifyCpfCnpj
+}
