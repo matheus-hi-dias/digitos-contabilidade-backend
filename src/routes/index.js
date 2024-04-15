@@ -14,7 +14,7 @@ const router = Router();
 router.use('/auth', authRouter);
 router.use('/nature', documentNatureRouter);
 router.use('/document-type', documentTypeRouter);
-router.use('/local-do-documento', documentLocalRouter);
+router.use('/document-location', documentLocalRouter);
 router.use('/permissoes', permissionRouter);
 router.use('/cargos', roleRouter);
 router.use('/permissoes-cargos', rolePermissionRouter);

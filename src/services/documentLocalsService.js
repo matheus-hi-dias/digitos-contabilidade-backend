@@ -7,8 +7,8 @@ const selectAll = async () => {
   const documentsFormatted = await Promise.all(documents.map(async (document) => {
     return {
       id: document.id,
-      local_doc: document.local_doc,
-      natureza: (await documentNaturesService.selectById(document.natureza_id)).natureza,
+      doc_location: document.doc_location,
+      nature: (await documentNaturesService.selectById(document.nature_id)),
     };
   }));
   console.log({documentsFormatted});
@@ -24,42 +24,44 @@ const selectById = async (id) => {
 
   const documentFormatted = documentLocal.map(async (document) => ({
     id: document.id,
-    local_doc: document.local_doc,
-    natureza: (await documentNaturesService.selectById(document.natureza_id)).natureza
+    doc_location: document.doc_location,
+    nature: (await documentNaturesService.selectById(document.nature_id))
   }))
 
   return documentFormatted[0];
 };
 
 const create = async (local) => {
-  const natureId = await documentLocalRepository.verifyNature(local.natureza);
-
-  if (!natureId.length) {
-    throw makeError({ message: 'Document nature not found', status: 400 });
+  if (!local.doc_location) {
+    throw makeError({ message: 'doc_location is required', status: 400 });
   }
+  if (!local.nature_id) {
+    throw makeError({ message: 'nature_id is required', status: 400 });
+  }
+
   const findLocalByName = await documentLocalRepository.findByName(
-    local.local_doc
+    local.doc_location
   );
   if (findLocalByName.length > 0) {
     throw makeError({ message: 'Document local already exists', status: 400 });
   }
 
-  const newLocal = {
-    local_doc: local.local_doc,
-    natureza_id: Number(natureId[0].id),
-  };
+  const nature = await documentNaturesService.selectById(local.nature_id);
+  if (nature.length === 0) {
+    throw makeError({ message: 'Nature not found', status: 404 });
+  }
 
-  const insertedLocal = await documentLocalRepository.create(newLocal);
+  const insertedLocal = await documentLocalRepository.create(local);
   return insertedLocal[0];
 };
 
 const update = async (id, updatedLocal) => {
-  if (!updatedLocal.local_doc) {
-    throw makeError({ message: 'local_doc is required', status: 400 });
+  if (!updatedLocal.doc_location) {
+    throw makeError({ message: 'doc_location is required', status: 400 });
   }
 
-  if (!updatedLocal.natureza_id) {
-    throw makeError({ message: 'natureza_id is required', status: 400 });
+  if (!updatedLocal.nature_id) {
+    throw makeError({ message: 'nature_id is required', status: 400 });
   }
 
   const findLocalById = await documentLocalRepository.findById(
@@ -71,7 +73,7 @@ const update = async (id, updatedLocal) => {
   }
 
   const findNatureById = await documentNaturesService.selectById(
-    updatedLocal.natureza_id
+    updatedLocal.nature_id
   );
 
   if (findNatureById.length === 0) {
@@ -79,9 +81,9 @@ const update = async (id, updatedLocal) => {
   }
 
   const findLocalByName = await documentLocalRepository.findByName(
-    updatedLocal.local_doc
+    updatedLocal.doc_location
   );
-  
+
   if (
     findLocalByName.length > 0 &&
     findLocalByName[0].id != id
@@ -96,8 +98,8 @@ const update = async (id, updatedLocal) => {
 
   const documentFormatted = updatedLocalResponse.map(async (document) => ({
     id: document.id,
-    local_doc: document.local_doc,
-    natureza: (await documentNaturesService.selectById(document.natureza_id)).natureza
+    doc_location: document.doc_location,
+    nature: (await documentNaturesService.selectById(document.nature_id)).nature
   }))
 
   return documentFormatted[0];

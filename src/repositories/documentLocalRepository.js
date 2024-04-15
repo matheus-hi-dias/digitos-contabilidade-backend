@@ -4,38 +4,38 @@ import knexConfig from '../../knexfile.js';
 const knexInstance = knex(knexConfig);
 
 const verifyNature = async (nature) => {
-  return await knexInstance('natureza_doc')
+  return await knexInstance('doc_nature')
     .select('id')
-    .where({ natureza: nature });
+    .where({ nature });
 };
 
 const findAll = async () => {
-  return await knexInstance('local_doc').select('*');
+  return await knexInstance('doc_location').select('*');
 };
 
 const findById = async (id) => {
-  return await knexInstance('local_doc').select('*').where({ id });
+  return await knexInstance('doc_location').select('*').where({ id });
 };
 
-const findByName = async (local_doc) => {
-  return await knexInstance('local_doc')
+const findByName = async (doc_location) => {
+  return await knexInstance('doc_location')
     .select('*')
-    .where('local_doc', local_doc);
+    .where({doc_location});
 };
 
 const create = async (local) => {
-  return await knexInstance('local_doc').insert(local).returning('*');
+  return await knexInstance('doc_location').insert(local).returning('*');
 };
 
 const update = async (id, local) => {
-  return await knexInstance('local_doc')
+  return await knexInstance('doc_location')
     .update(local)
     .where({ id })
     .returning('*');
 };
 
 const deleteDocumentLocal = async (id) => {
-  return await knexInstance('local_doc').delete().where({ id });
+  return await knexInstance('doc_location').delete().where({ id });
 };
 
 export default {
