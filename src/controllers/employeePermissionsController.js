@@ -14,9 +14,9 @@ const store = async (request, response, next) => {
 
 const showByEmployee = async (request, response, next) => {
   try {
-    const { funcionario_id } = request.params;
+    const { employee_id } = request.params;
     const employeePermissions = await employeePermissionsService.selectByEmployeeId(
-      funcionario_id
+      employee_id
     );
     return response.status(200).json(employeePermissions);
   } catch (error) {
@@ -26,8 +26,8 @@ const showByEmployee = async (request, response, next) => {
 
 const remove = async (request, response, next) => {
   try {
-    const { funcionario_id, permissao_id } = request.params;
-    await employeePermissionsService.remove(funcionario_id, permissao_id);
+    const { employee_id, permission_id } = request.params;
+    await employeePermissionsService.remove(employee_id, permission_id);
     response.status(200).json({message: "Employee permission deleted"});
   } catch (error) {
     next(error);

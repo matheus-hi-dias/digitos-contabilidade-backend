@@ -3,16 +3,16 @@ import knexConfig from "../../knexfile.js";
 
 const knexInstance = knex(knexConfig);
 
-const findByEmployeeId = async (funcionario_id) => {
-  return knexInstance("func_permissao").where({ funcionario_id }).select('*');
+const findByEmployeeId = async (employee_id) => {
+  return knexInstance("employee_permission").where({ employee_id }).select('*');
 }
 
 const create = async (employeePermission) => {
-  return knexInstance("func_permissao").insert(employeePermission).returning('*');
+  return knexInstance("employee_permission").insert(employeePermission).returning('*');
 }
 
-const deleteEmployeePermission = async (funcionario_id, permissao_id) => {
-  return knexInstance("func_permissao").delete().where({ funcionario_id, permissao_id });
+const deleteEmployeePermission = async (employee_id, permission_id) => {
+  return knexInstance("employee_permission").delete().where({ employee_id, permission_id });
 }
 
 export default {

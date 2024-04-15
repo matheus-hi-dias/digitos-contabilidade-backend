@@ -4,8 +4,8 @@ import employeePermissionsController from "../controllers/employeePermissionsCon
 
 const router = Router();
 
-router.get("/:funcionario_id", employeePermissionsController.showByEmployee);
+router.get("/:employee_id", employeePermissionsController.showByEmployee);
 router.post("/", employeePermissionsController.store);
-router.delete("/:funcionario_id/:permissao_id", employeePermissionsController.remove);
+router.delete("/employee/:employee_id/permission/:permission_id", employeePermissionsController.remove);
 
 export {router}
