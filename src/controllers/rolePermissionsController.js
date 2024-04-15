@@ -14,9 +14,9 @@ const store = async (request, response, next) => {
 
 const showByRole = async (request, response, next) => {
   try {
-    const { id_cargo } = request.params;
+    const { role_id } = request.params;
     const rolePermissions = await rolePermissionsService.selectByRoleId(
-      id_cargo
+      role_id
     );
     return response.status(200).json(rolePermissions);
   } catch (error) {
@@ -25,9 +25,9 @@ const showByRole = async (request, response, next) => {
 };
 const showByPermission = async (request, response, next) => {
   try {
-    const { id_permissao } = request.params;
+    const { permission_id } = request.params;
     const permissionRoles = await rolePermissionsService.selectByPermissionId(
-      id_permissao
+      permission_id
     );
     return response.status(200).json(permissionRoles);
   } catch (error) {
@@ -37,8 +37,8 @@ const showByPermission = async (request, response, next) => {
 
 const remove = async (request, response, next) => {
   try {
-    const { id_cargo, id_permissao } = request.params;
-    await rolePermissionsService.remove(id_cargo, id_permissao);
+    const { role_id, permission_id } = request.params;
+    await rolePermissionsService.remove(role_id, permission_id);
     response.status(200).json({message: "Role permission deleted"})
   } catch (error) {
     next(error);

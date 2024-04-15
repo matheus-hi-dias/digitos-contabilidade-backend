@@ -17,8 +17,8 @@ router.use('/document-type', documentTypeRouter);
 router.use('/document-location', documentLocalRouter);
 router.use('/permissions', permissionRouter);
 router.use('/roles', roleRouter);
-router.use('/permissoes-cargos', rolePermissionRouter);
-router.use('/funcionarios', employeeRouter);
+router.use('/roles-permissions', rolePermissionRouter);
+router.use('/employee', employeeRouter);
 router.use('/permissoes-funcionario', employeePermissionRouter);
 
 export { router };

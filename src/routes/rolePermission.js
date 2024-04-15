@@ -4,8 +4,9 @@ import rolePermissionsController from '../controllers/rolePermissionsController.
 
 const router = Router();
 
-router.get('/cargo/:id_cargo', rolePermissionsController.showByRole);
-router.get('/permissao/:id_permissao', rolePermissionsController.showByPermission);
+router.get('/role/:role_id', rolePermissionsController.showByRole);
+router.get('/permission/:permission_id', rolePermissionsController.showByPermission);
 router.post('/', rolePermissionsController.store);
+router.delete('/role/:role_id/permission/:permission_id', rolePermissionsController.remove);
 
 export { router };

@@ -4,25 +4,25 @@ import knexConfig from '../../knexfile.js';
 const knexInstance = knex(knexConfig);
 
 const create = async (rolePermission) => {
-  return await knexInstance('cargo_permissao')
+  return await knexInstance('role_permission')
     .insert(rolePermission)
     .returning('*');
 };
 
-const findByRoleId = async (id_cargo) => {
-  return await knexInstance('cargo_permissao').select('*').where({ id_cargo });
+const findByRoleId = async (role_id) => {
+  return await knexInstance('role_permission').select('*').where({ role_id });
 };
 
-const findByPermissionId = async (id_permissao) => {
-  return await knexInstance('cargo_permissao')
+const findByPermissionId = async (permission_id) => {
+  return await knexInstance('role_permission')
     .select('*')
-    .where({ id_permissao });
+    .where({ permission_id });
 };
 
-const deleteRolePermission = async (id_cargo, id_permissao) => {
-  return await knexInstance('cargo_permissao')
+const deleteRolePermission = async (role_id, permission_id) => {
+  return await knexInstance('role_permission')
     .delete()
-    .where({ id_cargo, id_permissao });
+    .where({ role_id, permission_id });
 };
 
 export default {
