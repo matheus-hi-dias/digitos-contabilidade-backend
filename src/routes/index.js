@@ -9,6 +9,7 @@ import { router as rolePermissionRouter } from "./rolePermission.js";
 import { router as employeeRouter } from "./employee.js";
 import { router as employeePermissionRouter } from "./employeePermission.js";
 import { router as clientRouter } from "./client.js";
+import { router as documentRouter } from "./document.js";
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/roles-permissions", rolePermissionRouter);
 router.use("/employee", employeeRouter);
 router.use("/employees-permissions", employeePermissionRouter);
 router.use("/clients", clientRouter);
+router.use("/documents", documentRouter);
 
 export { router };
