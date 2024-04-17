@@ -15,15 +15,15 @@ const findByDocumentCode = async (document_code) => {
   return await knexInstance("document").select("*").where({ document_code });
 };
 
-const update = async (id, document) => {
+const update = async (document_code, document) => {
   return await knexInstance("document")
     .update(document)
-    .where({ id })
+    .where({ document_code })
     .returning("*");
 };
 
-const deleteDocument = async (id) => {
-  return await knexInstance("document").delete().where({ id });
+const deleteDocument = async (document_code) => {
+  return await knexInstance("document").delete().where({ document_code });
 };
 
 export default {

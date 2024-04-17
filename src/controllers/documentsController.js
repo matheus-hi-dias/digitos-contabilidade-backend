@@ -43,4 +43,14 @@ const update = async (req, res, next) => {
     next(error);
   }
 };
-export default { create, show, index, update };
+
+const remove = async (req, res, next) => {
+  try {
+    const { document_code } = req.params;
+    await documentsService.remove(document_code);
+    res.status(200).json({ message: "Document deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+export default { create, show, index, update, remove };

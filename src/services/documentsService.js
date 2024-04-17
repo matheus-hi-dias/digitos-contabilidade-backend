@@ -67,6 +67,7 @@ const update = async (document_code, udpatedDocument) => {
   const documentUpdated = { ...udpatedDocument };
 
   delete documentUpdated.document_code;
+  delete documentUpdated.archiving_date;
 
   if (!documentUpdated.name) {
     throw makeError({ message: "name is required", status: 400 });
@@ -105,7 +106,16 @@ const update = async (document_code, udpatedDocument) => {
     }
   }
 
-  console.log({ documentUpdated });
+  return await documentRepository.update(document_code, documentUpdated);
 };
 
-export default { create, selectAll, selectByDocumentCode, update };
+const remove = async (document_code) => {
+  const deletedDocument = await documentRepository.deleteDocument(
+    document_code
+  );
+  if (!deletedDocument) {
+    throw makeError({ message: "Document not found", status: 404 });
+  }
+};
+
+export default { create, selectAll, selectByDocumentCode, update, remove };
