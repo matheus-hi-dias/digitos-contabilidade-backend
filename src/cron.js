@@ -3,8 +3,16 @@ import knexConfig from "../knexfile";
 
 const knexInstance = knex(knexConfig);
 
-const scheduledSelect = async () => {
-  await knexInstance("doc_nature").select("*");
+const cron = async () => {
+  try {
+    console.log("Cron job started", new Date());
+    await knexInstance("doc_nature").select("*");
+    console.log("Cron job finished", new Date());
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-scheduledSelect();
+cron();
+
+export default cron;
