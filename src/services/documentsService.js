@@ -9,6 +9,12 @@ const create = async (userId, document) => {
   if (!newDocument.document_code) {
     throw makeError({ message: "document_code is required", status: 400 });
   }
+  const documentExists = await documentRepository.findByDocumentCode(
+    newDocument.document_code
+  );
+  if (documentExists.length > 0) {
+    throw makeError({ message: "Document code already in use", status: 409 });
+  }
   if (!newDocument.name) {
     throw makeError({ message: "name is required", status: 400 });
   }
@@ -46,7 +52,8 @@ const create = async (userId, document) => {
   newDocument.employee_id = userId;
   newDocument.archiving_date = new Date();
 
-  return await documentRepository.create(newDocument);
+  const newDocumentResponse = await documentRepository.create(newDocument);
+  return newDocumentResponse[0];
 };
 
 const selectAll = async () => {
@@ -67,6 +74,13 @@ const update = async (document_code, udpatedDocument) => {
   delete documentUpdated.document_code;
   delete documentUpdated.archiving_date;
   delete documentUpdated.employee_id;
+
+  const documentExists = await documentRepository.findByDocumentCode(
+    document_code
+  );
+  if (documentExists.length === 0) {
+    throw makeError({ message: "Document not found", status: 404 });
+  }
 
   if (!documentUpdated.name) {
     throw makeError({ message: "name is required", status: 400 });
@@ -102,7 +116,12 @@ const update = async (document_code, udpatedDocument) => {
     }
   }
 
-  return await documentRepository.update(document_code, documentUpdated);
+  const documentUpdatedResponse = await documentRepository.update(
+    document_code,
+    documentUpdated
+  );
+
+  return documentUpdatedResponse[0];
 };
 
 const remove = async (document_code) => {
