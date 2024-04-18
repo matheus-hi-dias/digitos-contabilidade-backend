@@ -44,7 +44,7 @@ const create = async (employeePermission) => {
   if (!permission) {
     throw makeError({ message: "Permission not found", status: 404 });
   }
-  console.log({ employee });
+
   const permissionExistsOnRole =
     await rolePermissionRepository.verifyRolePermission(
       employee.role_id,
