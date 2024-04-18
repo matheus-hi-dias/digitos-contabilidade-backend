@@ -1,11 +1,13 @@
 import express from "express";
-import { router } from "./routes/index.js";
+import cors from "cors";
 import * as dotenv from "dotenv";
+import { router } from "./routes/index.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3030;
 
 app.use(express.json());
