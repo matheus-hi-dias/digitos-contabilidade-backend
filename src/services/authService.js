@@ -4,9 +4,9 @@ import jwt from "jsonwebtoken";
 import employeeRepository from "../repositories/employeeRepository.js";
 import { makeError } from "../middlewares/errorHandler.js";
 
-const login = async ({login, senha}) => {
+const login = async ({login, password}) => {
   let employeeFromDB = await employeeRepository.findByUsername(login);
-  console.log({login, senha})
+  console.log({login, password})
 
   if (employeeFromDB.length === 0) {
     const employeeByEmail = await employeeRepository.findByEmail(login);
@@ -16,7 +16,7 @@ const login = async ({login, senha}) => {
     employeeFromDB = employeeByEmail;
   }
   console.log({employeeFromDB})
-  const isValidPassword = await bcrypt.compare(senha, employeeFromDB[0].senha);
+  const isValidPassword = await bcrypt.compare(password, employeeFromDB[0].password);
   console.log({isValidPassword});
 
   if (!isValidPassword) {
