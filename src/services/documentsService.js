@@ -4,7 +4,7 @@ import documentLocalsService from "./documentLocalsService.js";
 import documentNaturesService from "./documentNaturesService.js";
 import documentTypesService from "./documentTypesService.js";
 
-const create = async (document) => {
+const create = async (userId, document) => {
   const newDocument = { ...document };
   if (!newDocument.document_code) {
     throw makeError({ message: "document_code is required", status: 400 });
@@ -14,9 +14,6 @@ const create = async (document) => {
   }
   if (!newDocument.client_id) {
     throw makeError({ message: "client_id is required", status: 400 });
-  }
-  if (!newDocument.employee_id) {
-    throw makeError({ message: "employee_id is required", status: 400 });
   }
 
   if (newDocument.hasOwnProperty("nature_id")) {
@@ -46,6 +43,7 @@ const create = async (document) => {
     }
   }
 
+  newDocument.employee_id = userId;
   newDocument.archiving_date = new Date();
 
   return await documentRepository.create(newDocument);
@@ -68,15 +66,13 @@ const update = async (document_code, udpatedDocument) => {
 
   delete documentUpdated.document_code;
   delete documentUpdated.archiving_date;
+  delete documentUpdated.employee_id;
 
   if (!documentUpdated.name) {
     throw makeError({ message: "name is required", status: 400 });
   }
   if (!documentUpdated.client_id) {
     throw makeError({ message: "client_id is required", status: 400 });
-  }
-  if (!documentUpdated.employee_id) {
-    throw makeError({ message: "employee_id is required", status: 400 });
   }
 
   if (documentUpdated.hasOwnProperty("nature_id")) {

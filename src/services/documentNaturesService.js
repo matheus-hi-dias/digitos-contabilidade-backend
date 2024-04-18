@@ -1,5 +1,5 @@
-import { makeError } from '../middlewares/errorHandler.js';
-import documentNatureRepository from '../repositories/documentNatureRepository.js';
+import { makeError } from "../middlewares/errorHandler.js";
+import documentNatureRepository from "../repositories/documentNatureRepository.js";
 
 const selectAll = async () => {
   return await documentNatureRepository.findAllNatures();
@@ -9,7 +9,7 @@ const selectById = async (id) => {
   const nature = await documentNatureRepository.findNatureById(id);
 
   if (nature.length === 0) {
-    throw makeError({ message: 'Nature not found', status: 404 });
+    throw makeError({ message: "Nature not found", status: 404 });
   }
 
   return nature[0];
@@ -17,12 +17,14 @@ const selectById = async (id) => {
 
 const create = async (nature) => {
   if (!nature.nature) {
-    throw makeError({ message: 'Nature is required', status: 400 });
+    throw makeError({ message: "Nature is required", status: 400 });
   }
 
-  const findNatureByName = await documentNatureRepository.findNatureByName(nature.nature);
+  const findNatureByName = await documentNatureRepository.findNatureByName(
+    nature.nature
+  );
   if (findNatureByName.length > 0) {
-    throw makeError({ message: 'Nature already exists', status: 400 });
+    throw makeError({ message: "Nature already exists", status: 400 });
   }
 
   const newNature = await documentNatureRepository.createNature(nature);
@@ -30,18 +32,21 @@ const create = async (nature) => {
 };
 
 const update = async (id, updatedNature) => {
-
   if (!updatedNature.nature) {
-    throw makeError({ message: 'Nature is required', status: 400 });
+    throw makeError({ message: "Nature is required", status: 400 });
   }
 
-  const findNatureByName = await documentNatureRepository.findNatureByName(updatedNature.nature);
-  console.log(findNatureByName)
+  const findNatureByName = await documentNatureRepository.findNatureByName(
+    updatedNature.nature
+  );
   if (findNatureByName.length > 0 && findNatureByName[0].id != id) {
-    throw makeError({ message: 'Nature already exists', status: 400 });
+    throw makeError({ message: "Nature already exists", status: 400 });
   }
 
-  const updateNatureResponse = await documentNatureRepository.udpateNature(id, updatedNature);
+  const updateNatureResponse = await documentNatureRepository.udpateNature(
+    id,
+    updatedNature
+  );
 
   return updateNatureResponse[0];
 };
