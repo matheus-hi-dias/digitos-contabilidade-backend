@@ -12,10 +12,6 @@ const port = process.env.PORT || 3030;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app.use("/", router);
 
 app.use(errorHandler);
