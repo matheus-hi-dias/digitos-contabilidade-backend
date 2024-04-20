@@ -67,7 +67,9 @@ const selectByDocumentCode = async (document_code) => {
     throw makeError({ message: "Document not found", status: 404 });
   }
   const documentResponse = {
-    ...document[0],
+    document_code: document[0].document_code,
+    name: document[0].name,
+    archiving_date: document[0].archiving_date,
     document_nature: await documentNaturesService.selectById(
       document[0].nature_id
     ),
