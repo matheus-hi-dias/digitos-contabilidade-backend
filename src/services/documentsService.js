@@ -3,6 +3,7 @@ import documentRepository from "../repositories/documentRepository.js";
 import documentLocalsService from "./documentLocalsService.js";
 import documentNaturesService from "./documentNaturesService.js";
 import documentTypesService from "./documentTypesService.js";
+import clientsService from "./clientsService.js";
 
 const create = async (userId, document) => {
   const newDocument = { ...document };
@@ -65,7 +66,21 @@ const selectByDocumentCode = async (document_code) => {
   if (document.length === 0) {
     throw makeError({ message: "Document not found", status: 404 });
   }
-  return document[0];
+  const documentResponse = {
+    ...document[0],
+    document_nature: await documentNaturesService.selectById(
+      document[0].nature_id
+    ),
+    document_location: await documentLocalsService.selectById(
+      document[0].location_id
+    ),
+    document_type: await documentTypesService.selectById(
+      document[0].doc_type_id
+    ),
+    client: await clientsService.selectById(document[0].client_id),
+  };
+
+  return documentResponse;
 };
 
 const update = async (document_code, udpatedDocument) => {
