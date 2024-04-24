@@ -21,5 +21,6 @@
       "path": "/src/cron",
       "schedule": "0 0 * * *"
     }
-  ]
+  ],
+  "regions": ["gru1"]
 }
