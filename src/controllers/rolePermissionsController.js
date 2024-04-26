@@ -2,11 +2,11 @@ import rolePermissionsService from '../services/rolePermissionsService.js';
 
 const store = async (request, response, next) => {
   try {
-    const rolePermission = request.body;
-    const newRolePermission = await rolePermissionsService.create(
-      rolePermission
+    const rolePermissions = request.body;
+    const newRolePermissions = await rolePermissionsService.create(
+      rolePermissions
     );
-    response.status(201).json(newRolePermission);
+    response.status(201).json(newRolePermissions);
   } catch (error) {
     next(error);
   }

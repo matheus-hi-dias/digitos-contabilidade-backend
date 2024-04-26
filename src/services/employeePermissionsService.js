@@ -2,7 +2,7 @@ import { makeError } from "../middlewares/errorHandler.js";
 import employeePermissionRepository from "../repositories/employeePermissionRepository.js";
 import employeesService from "./employeesService.js";
 import permissionsService from "./permissionsService.js";
-import rolePermissionRepository from "../repositories/rolePermissionRepository.js";
+import rolePermissionsService from "./rolePermissionsService.js";
 
 const selectByEmployeeId = async (employee_id) => {
   const employeePermissions =
@@ -23,45 +23,39 @@ const selectByEmployeeId = async (employee_id) => {
   return employeePermissionsFormatted;
 };
 
-const create = async (employeePermission) => {
+const create = async (employeePermissions) => {
+  const employeePermissionsCreate = [...employeePermissions];
+
+  employeePermissionsCreate.forEach(async (employeePermission) => {
   if (!employeePermission.employee_id) {
     throw makeError({ message: "employee_id is required", status: 400 });
   }
   if (!employeePermission.permission_id) {
     throw makeError({ message: "permission_id is required", status: 400 });
   }
+});
 
-  const employee = await employeesService.selectById(
-    employeePermission.employee_id
-  );
-  if (!employee) {
-    throw makeError({ message: "Employee not found", status: 404 });
+  const employee = await employeesService.selectById(employeePermissionsCreate[0].employee_id);
+  if (employee.role.id) {
+    console.log('entrou no employee.role.id')
+    const permissionsOnRole = await rolePermissionsService.selectByRoleId(employee.role.id, false);
+    const employeePermissionsIds = employeePermissionsCreate.map(employeePermission => employeePermission.permission_id);
+
+    const permissionExistsOnRole = permissionsOnRole.filter(permissionOnRole => employeePermissionsIds.includes(permissionOnRole.id))
+    console.log({permissionExistsOnRole})
+    if (permissionExistsOnRole.length > 0) {
+      console.log(' entrou no permissionExistsOnRole')
+      throw makeError({
+        message: `Employee role already have permissions: ${permissionExistsOnRole.map(permission => permission.permission).join(', ')}`,
+        status: 409,
+      });
+    }
   }
 
-  const permission = await permissionsService.selectById(
-    employeePermission.permission_id
+  const newEmployeePermissions = await employeePermissionRepository.create(
+    employeePermissionsCreate
   );
-  if (!permission) {
-    throw makeError({ message: "Permission not found", status: 404 });
-  }
-
-  const permissionExistsOnRole =
-    await rolePermissionRepository.verifyRolePermission(
-      employee.role_id,
-      permission.id
-    );
-
-  if (permissionExistsOnRole.length > 0) {
-    throw makeError({
-      message: "Employee role already have permission",
-      status: 409,
-    });
-  }
-
-  const newEmployeePermission = await employeePermissionRepository.create(
-    employeePermission
-  );
-  return newEmployeePermission[0];
+  return newEmployeePermissions[0];
 };
 
 const remove = async (employee_id, permission_id) => {

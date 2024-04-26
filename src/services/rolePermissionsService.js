@@ -3,34 +3,29 @@ import rolePermissionRepository from '../repositories/rolePermissionRepository.j
 import roleService from './rolesService.js';
 import permissionService from './permissionsService.js';
 
-const create = async (rolePermission) => {
-  if (!rolePermission.role_id) {
-    throw makeError({ message: 'role_id is required', status: 400 });
-  }
+const create = async (rolePermissions) => {
+  const rolePermissionsCreate = [...rolePermissions]
 
-  if (!rolePermission.permission_id) {
-    throw makeError({ message: 'permission_id is required', status: 400 });
-  }
-  const verifyRole = await roleService.selectById(rolePermission.role_id);
-  if (!verifyRole) {
-    throw makeError({ message: 'Role not found', status: 404 });
-  }
+  rolePermissionsCreate.forEach( rolePermission => {
+    if (!rolePermission.role_id) {
+      throw makeError({ message: 'role_id is required', status: 400 });
+    }
+    if (!rolePermission.permission_id) {
+      throw makeError({ message: 'permission_id is required', status: 400 });
+    }
+  })
 
-  const verifyPermission = await permissionService.selectById(rolePermission.permission_id);
-  if (!verifyPermission) {
-    throw makeError({ message: 'Permission not found', status: 404 });
-  }
-
-  const newRolePermission = await rolePermissionRepository.create(
-    rolePermission
+  const newRolePermissions = await rolePermissionRepository.create(
+    rolePermissionsCreate
   );
-  return newRolePermission[0];
+
+  return newRolePermissions[0];
 };
 
-const selectByRoleId = async (role_id) => {
+const selectByRoleId = async (role_id, verifyErrors=true) => {
   const rolePermissions = await rolePermissionRepository.findByRoleId(role_id);
 
-  if (rolePermissions.length === 0) {
+  if (verifyErrors && rolePermissions.length === 0) {
     throw makeError({ message: 'Role permissions not found', status: 404 });
   }
 

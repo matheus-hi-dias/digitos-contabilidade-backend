@@ -20,7 +20,7 @@ const selectById = async (id) => {
     username: employee[0].username,
     email: employee[0].email,
     name: employee[0].name,
-    role: await rolesService.selectById(employee[0].role_id),
+    role: employee[0].role_id ? await rolesService.selectById(employee[0].role_id) : null,
   };
 
   return employeeResponse;
@@ -39,9 +39,7 @@ const create = async (employee) => {
   if (!employee.name) {
     throw makeError({ message: "name is required", status: 400 });
   }
-  if (!employee.role_id) {
-    throw makeError({ message: "role_id is required", status: 400 });
-  }
+
 
   const findEmployeeByUsername = await employeeRepository.findByUsername(
     employee.username
@@ -80,9 +78,6 @@ const update = async (id, updatedEmployee) => {
   }
   if (!updatedEmployee.name) {
     throw makeError({ message: "name is required", status: 400 });
-  }
-  if (!updatedEmployee.role_id) {
-    throw makeError({ message: "role_id is required", status: 400 });
   }
 
   const findEmployeeByUsername = await employeeRepository.findByUsername(

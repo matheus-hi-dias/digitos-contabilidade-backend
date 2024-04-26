@@ -1,6 +1,7 @@
 import { makeError } from '../middlewares/errorHandler.js';
 
 import roleRepository from '../repositories/roleRepository.js';
+import rolePermissionsService from './rolePermissionsService.js';
 
 const selectAll = async () => {
   return await roleRepository.findAll();
@@ -26,8 +27,23 @@ const create = async (role) => {
     throw makeError({ message: 'Role already exists', status: 400 });
   }
 
-  const newPermission = await roleRepository.create(role);
-  return newPermission[0];
+
+  const newRole = await roleRepository.create({role: role.role});
+  const permissionsResponse = []
+  if (role.permissions) {
+    const rolePermissions = role.permissions.map(permission => {
+      return {
+        role_id: newRole[0].id,
+        permission_id: permission.id
+      }
+    })
+    permissionsResponse.push(await rolePermissionsService.create(rolePermissions))
+  }
+  const response = {
+    ...newRole[0],
+    permissions: permissionsResponse
+  }
+  return response;
 };
 
 const update = async (id, updatedRole) => {
