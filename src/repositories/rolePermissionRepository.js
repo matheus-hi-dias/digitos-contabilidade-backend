@@ -28,7 +28,7 @@ const verifyRolePermission = async (role_id, permission_id) => {
 const deleteRolePermission = async (role_id, permission_id) => {
   return await knexInstance("role_permission")
     .delete()
-    .where({ role_id, permission_id });
+    .whereIn('role_id',role_id).whereIn('permission_id',permission_id);
 };
 
 export default {

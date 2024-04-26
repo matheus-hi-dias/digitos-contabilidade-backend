@@ -19,7 +19,7 @@ const create = async (rolePermissions) => {
     rolePermissionsCreate
   );
 
-  return newRolePermissions[0];
+  return newRolePermissions;
 };
 
 const selectByRoleId = async (role_id, verifyErrors=true) => {
@@ -52,7 +52,9 @@ const selectByPermissionId = async (permission_id) => {
 };
 
 const remove = async (role_id, permission_id) => {
-  const rolePermission = await rolePermissionRepository.deleteRolePermission(role_id, permission_id);
+  const role = Array.isArray(role_id) ? role_id : [role_id]
+  const permission = Array.isArray(permission_id) ? permission_id : [permission_id]
+  const rolePermission = await rolePermissionRepository.deleteRolePermission(role, permission);
   if (!rolePermission) {
     throw makeError({ message: 'Role permission not found', status: 404 });
   }

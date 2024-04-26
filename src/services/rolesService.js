@@ -34,7 +34,7 @@ const create = async (role) => {
     const rolePermissions = role.permissions.map(permission => {
       return {
         role_id: newRole[0].id,
-        permission_id: permission.id
+        permission_id: permission
       }
     })
     permissionsResponse.push(await rolePermissionsService.create(rolePermissions))
@@ -51,15 +51,42 @@ const update = async (id, updatedRole) => {
     throw makeError({ message: 'role is required', status: 400 });
   }
 
+  if (!updatedRole.hasOwnProperty("permissions")) {
+    throw makeError({message: "permissions array is required", status: 400})
+  }
+
   const findRoleByName = await roleRepository.findByName(updatedRole.role);
 
   if (findRoleByName.length > 0 && findRoleByName[0].id != id) {
     throw makeError({ message: 'Role already exists', status: 400 });
   }
 
-  const updatedRoleResponse = await roleRepository.update(id, updatedRole);
+  if (updatedRole.permissions.length > 0) {
+    const rolePermissions = (await rolePermissionsService.selectByRoleId(id, false)).map(permission => permission.id)
+    const permissionsToDelete = rolePermissions.filter( rolePermission => !updatedRole.permissions.includes(rolePermission))
+    const permissionsToAdd = updatedRole.permissions.filter( permissionUpdate => !rolePermissions.includes(permissionUpdate))
 
-  return updatedRoleResponse[0];
+    if (permissionsToAdd.length > 0) {
+      const addPermissions = permissionsToAdd.map(permission => {
+        return {
+          role_id: id,
+          permission_id: permission
+        }
+      })
+      await rolePermissionsService.create(addPermissions)
+    }
+    
+    if (permissionsToDelete.length > 0) {
+      await rolePermissionsService.remove([id], permissionsToDelete)
+    }
+  }
+  const roleUpdated = {
+    role: updatedRole.role
+  }
+  const updatedRoleResponse = await roleRepository.update(id, roleUpdated);
+  const rolePermissionsResult = await rolePermissionsService.selectByRoleId(id)
+
+  return {...updatedRoleResponse[0], permissions: rolePermissionsResult};
 };
 
 const remove = async (id) => {
