@@ -31,7 +31,6 @@ const selectByRoleId = async (role_id, verifyErrors=true) => {
 
   const rolePermissionsFormatted = await Promise.all(rolePermissions.map(async (rolePermission) => {
     return await permissionService.selectById(rolePermission.permission_id);
-
   }))
 
   return rolePermissionsFormatted;

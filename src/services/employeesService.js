@@ -4,6 +4,7 @@ import employeeRepository from "../repositories/employeeRepository.js";
 import { makeError } from "../middlewares/errorHandler.js";
 
 import rolesService from "./rolesService.js";
+import employeePermissionsService from "./employeePermissionsService.js";
 
 const selectAll = async () => {
   return await employeeRepository.findAll();
@@ -60,13 +61,24 @@ const create = async (employee) => {
     Number(process.env.SALT_ROUNDS)
   );
 
+  const userPermissions = employee.permissions;
   const user = {
     ...employee,
     password: hashedPassword,
   };
+  delete user.permissions
 
   const newEmployee = await employeeRepository.create(user);
-  return newEmployee[0];
+
+  const permissionsResponse = []
+  if (userPermissions.length > 0) {
+    const employeePermissions = userPermissions.map(permission => ({
+      employee_id: newEmployee[0].id,
+      permission_id: permission
+    }))
+    permissionsResponse.push(await employeePermissionsService.create(employeePermissions))
+  }
+  return {...newEmployee[0], permissions: permissionsResponse};
 };
 
 const update = async (id, updatedEmployee) => {
