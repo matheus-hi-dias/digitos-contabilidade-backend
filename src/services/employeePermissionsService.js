@@ -34,14 +34,11 @@ const create = async (employeePermissions) => {
   const employee = await employeesService.selectById(employeePermissionsCreate[0].employee_id);
   if (employee.role != null) {
     if (employee.role.id) {
-      console.log('entrou no employee.role.id')
       const permissionsOnRole = await rolePermissionsService.selectByRoleId(employee.role.id, false);
       const employeePermissionsIds = employeePermissionsCreate.map(employeePermission => employeePermission.permission_id);
 
       const permissionExistsOnRole = permissionsOnRole.filter(permissionOnRole => employeePermissionsIds.includes(permissionOnRole.id))
-      console.log({permissionExistsOnRole})
       if (permissionExistsOnRole.length > 0) {
-        console.log(' entrou no permissionExistsOnRole')
         throw makeError({
           message: `Employee role already have permissions: ${permissionExistsOnRole.map(permission => permission.permission).join(', ')}`,
           status: 409,
