@@ -5,6 +5,7 @@ import { makeError } from "../middlewares/errorHandler.js";
 
 import rolesService from "./rolesService.js";
 import employeePermissionsService from "./employeePermissionsService.js";
+import rolePermissionsService from "./rolePermissionsService.js";
 
 const selectAll = async () => {
   return await employeeRepository.findAll();
@@ -41,6 +42,9 @@ const create = async (employee) => {
     throw makeError({ message: "name is required", status: 400 });
   }
 
+  if (!employee.hasOwnProperty("permissions")) {
+    throw makeError({message: "permissions array is required", status: 400})
+  }
 
   const findEmployeeByUsername = await employeeRepository.findByUsername(
     employee.username
@@ -91,6 +95,9 @@ const update = async (id, updatedEmployee) => {
   if (!updatedEmployee.name) {
     throw makeError({ message: "name is required", status: 400 });
   }
+  if (!employee.hasOwnProperty("permissions")) {
+    throw makeError({message: "permissions array is required", status: 400})
+  }
 
   const findEmployeeByUsername = await employeeRepository.findByUsername(
     updatedEmployee.username
@@ -106,6 +113,7 @@ const update = async (id, updatedEmployee) => {
     throw makeError({ message: "Email already in use", status: 400 });
   }
   const employeeToUpdate = { ...updatedEmployee };
+  delete employeeToUpdate.permissions;
   if (employeeToUpdate.password) {
     employeeToUpdate.password = await bcrypt.hash(
       employeeToUpdate.password,
@@ -113,12 +121,31 @@ const update = async (id, updatedEmployee) => {
     );
   }
 
+  if (updatedEmployee.permissions.length > 0) {
+    const employeePermissionsFromDB = (await employeePermissionsService.selectByEmployeeId(id, false)).map(permission => permission.id);
+    const permissionsToDelete = employeePermissionsFromDB.filter(employeePermission => updatedEmployee.permissions.includes(employeePermission));
+    const permissionsToAdd = updatedEmployee.permissions.filter(permissionUpdate => employeePermissionsFromDB.includes(permissionUpdate));
+
+    if (permissionsToAdd.length > 0) {
+      const addPermissions = permissionsToAdd.map(permission => ({
+        employee_id: id,
+        permission_id: permission
+      }))
+      await employeePermissionsService.create(addPermissions)
+    }
+
+    if (permissionsToDelete.length > 0) {
+      await rolePermissionsService.remove([id], permissionsToDelete)
+    }
+  }
+
   const updatedEmployeeResponse = await employeeRepository.update(
     id,
     employeeToUpdate
   );
+  const employeePermissionsResult = await employeePermissionsService.selectByEmployeeId(id)
 
-  return updatedEmployeeResponse[0];
+  return {...updatedEmployeeResponse[0], permissions: employeePermissionsResult};
 };
 
 const remove = async (id) => {
