@@ -4,13 +4,9 @@ import employeesService from "./employeesService.js";
 import permissionsService from "./permissionsService.js";
 import rolePermissionsService from "./rolePermissionsService.js";
 
-const selectByEmployeeId = async (employee_id, verifyErrors=true) => {
+const selectByEmployeeId = async (employee_id) => {
   const employeePermissions =
     await employeePermissionRepository.findByEmployeeId(employee_id);
-
-  if (verifyErrors && employeePermissions.length === 0) {
-    throw makeError({ message: "Employee permissions not found", status: 404 });
-  }
 
   const employeePermissionsFormatted = await Promise.all(employeePermissions.map(async (employeePermission) => {
       return await permissionsService.selectById(employeePermission.permission_id);

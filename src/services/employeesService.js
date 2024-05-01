@@ -122,7 +122,7 @@ const update = async (id, updatedEmployee) => {
   }
 
   if (updatedEmployee.permissions.length > 0) {
-    const employeePermissionsFromDB = (await employeePermissionsService.selectByEmployeeId(id, false)).map(permission => permission.id);
+    const employeePermissionsFromDB = (await employeePermissionsService.selectByEmployeeId(id)).map(permission => permission.id);
     const permissionsToDelete = employeePermissionsFromDB.filter(employeePermission => !updatedEmployee.permissions.includes(employeePermission));
     const permissionsToAdd = updatedEmployee.permissions.filter(permissionUpdate => !employeePermissionsFromDB.includes(permissionUpdate));
 
