@@ -17,6 +17,17 @@ const show = async (req, res, next) => {
     next(error)
   }
 }
+
+const showMyProfile = async (req, res, next) => {
+  try {
+    const { id } = req.token
+    const employee = await employeesService.selectById(id)
+    return res.status(200).json(employee)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const store = async (req, res, next) => {
   try {
     const employee = req.body
@@ -53,6 +64,7 @@ const remove = async (req, res, next) => {
 export default {
   index,
   show,
+  showMyProfile,
   store,
   update,
   remove
