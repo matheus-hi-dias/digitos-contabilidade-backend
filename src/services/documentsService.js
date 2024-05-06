@@ -66,23 +66,8 @@ const selectByDocumentCode = async (document_code) => {
   if (document.length === 0) {
     throw makeError({ message: "Document not found", status: 404 });
   }
-  const documentResponse = {
-    document_code: document[0].document_code,
-    name: document[0].name,
-    archiving_date: document[0].archiving_date,
-    document_nature: await documentNaturesService.selectById(
-      document[0].nature_id
-    ),
-    document_location: await documentLocalsService.selectById(
-      document[0].location_id
-    ),
-    document_type: await documentTypesService.selectById(
-      document[0].doc_type_id
-    ),
-    client: await clientsService.selectById(document[0].client_id),
-  };
 
-  return documentResponse;
+  return document[0];
 };
 
 const update = async (document_code, udpatedDocument) => {
