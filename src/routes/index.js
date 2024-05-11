@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { auth } from "../middlewares/auth.js";
 import { router as authRouter } from "./auth.js";
+import { router as profileRouter } from "./profile.js";
 import { router as documentNatureRouter } from "./documentNature.js";
 import { router as documentTypeRouter } from "./documentType.js";
 import { router as documentLocalRouter } from "./documentLocal.js";
@@ -18,6 +19,7 @@ router.use("/auth", authRouter);
 
 router.use(auth);
 
+router.use("/my-profile", profileRouter);
 router.use("/nature", documentNatureRouter);
 router.use("/document-type", documentTypeRouter);
 router.use("/document-location", documentLocalRouter);
