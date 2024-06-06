@@ -12,10 +12,13 @@ import { router as employeeRouter } from "./employee.js";
 import { router as employeePermissionRouter } from "./employeePermission.js";
 import { router as clientRouter } from "./client.js";
 import { router as documentRouter } from "./document.js";
+import cronHandler from "../cron.js";
 
 const router = Router();
 
 router.use("/auth", authRouter);
+
+router.get("/cron", cronHandler);
 
 router.use(auth);
 
